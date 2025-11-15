@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banikilabs Food | Kinshasa Restauration Rapide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        /* Custom styles for a vibrant, street food theme */
+        :root {
+            --primary: #FFD700; /* Gold/Yellow for vibrancy */
+            --secondary: #D93737; /* Red/Maroon for accent */
+            --dark: #1E293B; /* Slate-800 for dark background */
+            --light-bg: #FFFDF5; /* Crème très clair pour le fond global */
+            --accent-green: #34D399; /* Green for WhatsApp/Success */
+        }
+        .bg-primary { background-color: var(--primary); }
+        .text-primary { color: var(--primary); }
+        .bg-secondary { background-color: var(--secondary); }
+        .hover\:bg-secondary:hover { background-color: var(--secondary); }
+        
+        /* Style général plus chaleureux */
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--light-bg); /* Crème très clair */
+            line-height: 1.6;
+        }
+        .menu-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border-radius: 1.25rem; /* Plus arrondi encore */
+            overflow: hidden; 
+        }
+        .menu-card:hover {
+            transform: translateY(-10px) scale(1.02); /* Effet plus dynamique */
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.25);
+        }
+        .whatsapp-btn-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(46, 172, 85, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(46, 172, 85, 0); }
+        }
+        /* Style pour l'espace image */
+        .image-placeholder {
+            width: 100%;
+            height: 180px; 
+            background-color: #FFFBF0; 
+            border-radius: 0.75rem; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 2.2rem; 
+            color: var(--secondary); 
+            border: 2px dashed var(--primary);
+            text-align: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); 
+        }
+        /* Styles pour la modale de confirmation */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); 
+            display: none; 
+            align-items: center;
+            justify-content: center;
+            z-index: 1000; 
+            backdrop-filter: blur(5px); 
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff, #f0f0f0); 
+            border-radius: 1.5rem; 
+            max-width: 90%;
+            width: 550px; 
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.35); 
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+        }
+        .invoice-item-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+        }
+        .invoice-img-placeholder {
+            width: 70px; 
+            height: 70px;
+            background-color: #FEEBCF;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.5rem; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Header "transparent moderne" effect */
+        .header-transparent-effect {
+            background: rgba(30, 41, 59, 0.9); /* Fond légèrement transparent */
+            backdrop-filter: blur(8px); /* Effet de flou derrière le header */
+            -webkit-backdrop-filter: blur(8px); 
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); 
+            border-bottom: none; 
+        }
+        
+        /* Category Buttons - Glow/Dim Effect */
+        .category-btn.active {
+            background-color: var(--primary); /* Yellow */
+            color: var(--dark); /* Text Dark */
+            /* Ajout de la brillance */
+            box-shadow: 
+                0 0 18px rgba(255, 215, 0, 0.9), /* Primaire Glow */
+                0 0 0 4px var(--secondary), 
+                0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .category-btn {
+            /* Bien foncé mais transparent (couleur dark avec 65% d'opacité) */
+            background-color: rgba(30, 41, 59, 0.65); 
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: none; /* Enlever l'ombre pour le style "dim" */
+        }
+        .category-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Live Indicator Styles */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+        .live-blink {
+            animation: blink 1.5s infinite;
+        }
+        
+        /* Floating Footer Link Style (TEXTE EN BLANC) */
+        .floating-footer-link {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 999;
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: rgba(30, 41, 59, 0.5); /* Semi-transparent dark */
+            color: #ffffff; /* BLANC comme demandé */
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        .floating-footer-link:hover {
+            background-color: rgba(30, 41, 59, 0.9);
+            transform: scale(1.05);
+        }
+
+        /* Custom style for the language selector dropdown */
+        .language-selector-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .language-selector {
+            background-color: var(--secondary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23ffffff'%3e%3cpath d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1em;
+            padding-right: 2.5rem; /* Make space for the custom arrow */
+        }
+        .language-selector option {
+            background-color: white;
+            color: var(--dark);
+        }
+        
+        /* Time Input Arrows (Default HTML behavior) */
+        input[type="time"]::-webkit-inner-spin-button, 
+        input[type="time"]::-webkit-outer-spin-button { 
+            -webkit-appearance: auto; 
+            margin: 0; 
+            opacity: 1; /* Ensure visibility */
+        }
+        /* Forced 24h format display on inputs for consistency */
+        input[type="time"] {
+            /* Use a custom font if needed, but the browser handles the format */
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <header class="header-transparent-effect sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="text-white text-sm font-medium p-2 border border-primary rounded-lg">
+                    <img src="logo.jpg" alt="Logo blabs" class="object-contain w-12 h-12,5">
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-primary tracking-tight" style="text-shadow: 0 0 10px rgba(255,215,0,0.7), 0 0 20px rgba(255,215,0,0.4);">
+                    BANIKILABS FOOD <span class="text-white text-lg font-medium block sm:inline opacity-90">| Kinshasa</span>
+                </h1>
+            </div>
+            
+            <div class="language-selector-container">
+                <button class="bg-dark text-white p-3 rounded-full shadow-lg" aria-label="Sélectionner la langue">
+                    <span class="text-xl">🌐</span>
+                </button>
+                <select id="lang-select" class="language-selector" onchange="switchLanguage(this.value)">
+                    <option value="fr">Français (FR)</option>
+                    <option value="en">English (EN)</option>
+                    <option value="sw">Kiswahili (SW)</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12">
+        
+        <section class="mb-10 p-8 bg-white rounded-2xl shadow-2xl border-b-8 border-secondary transform transition-all hover:scale-[1.01] hover:shadow-3xl">
+            <h2 class="text-4xl font-extrabold mb-3 text-dark" data-key="welcome_title">👋 Bienvenue chez Banikilabs Food !</h2>
+            <p class="text-xl text-gray-700 mb-4 leading-relaxed" data-key="welcome_text">
+                Découvrez les saveurs authentiques et l'ambiance conviviale de la **restauration rapide** de Kinshasa. Commandez rapidement, nous nous occupons du reste !
+            </p>
+            
+            <div class="p-4 bg-yellow-50 border-l-4 border-primary text-gray-700 rounded-lg shadow-md">
+                <p class="font-semibold text-lg" data-key="buffet_info_title">Nouveau : Le service **Buffet** est bientôt disponible !</p>
+                <p class="text-sm" data-key="buffet_info_text">Restez à l'écoute pour nos nouvelles formules de repas de groupe.</p>
+            </div>
+        </section>
+
+        
+        <section class="mb-12 p-8 text-white rounded-2xl shadow-2xl text-center" style="background: linear-gradient(45deg, #FF6B6B 0%, #FFD166 100%); border: 5px solid #FFED4A;">
+            <h2 class="text-4xl sm:text-5xl font-extrabold mb-2" data-key="prominent_banner_title">LIVRAISON GRATUITE ! 🤩</h2>
+            <p class="text-xl sm:text-2xl font-medium mb-3" data-key="prominent_banner_location">
+                Pour toutes les commandes livrées au **Bâtiment du Temple du Pieu de Kinshasa** (5000 FC pour les autres zones).
+            </p>
+            <p class="text-lg sm:text-xl font-bold p-2 bg-black bg-opacity-30 rounded-full inline-block shadow-lg" data-key="prominent_banner_tip">
+                Vos pourboires sont les bienvenus pour un service toujours meilleur ! 🙏
+            </p>
+        </section>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <section class="lg:col-span-2">
+                
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
+                    <button class="category-btn active w-full py-4 bg-primary text-dark font-extrabold text-lg rounded-xl shadow-xl transition-all" data-category="Breakfast" onclick="selectCategory('Breakfast', this)">
+                        <span data-key="cat_breakfast">Petit Déjeuner</span>
+                    </button>
+                    <button class="category-btn w-full py-4 bg-dark text-white font-extrabold text-lg rounded-xl shadow-xl transition-all" data-category="Lunch" onclick="selectCategory('Lunch', this)">
+                        <span data-key="cat_lunch">Déjeuner</span>
+                    </button>
+                    <button class="category-btn w-full py-4 bg-dark text-white font-extrabold text-lg rounded-xl shadow-xl transition-all" data-category="Dinner" onclick="selectCategory('Dinner', this)">
+                        <span data-key="cat_dinner">Dîner</span>
+                    </button>
+                </div>
+                
+                <h3 id="menu-title-display" class="text-2xl font-bold mb-4 text-dark border-b-2 border-primary pb-2" data-key="menu_title">Notre Menu du Jour : Petit Déjeuner</h3>
+                <div id="menu-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    </div>
+            </section>
+            
+            <aside class="lg:col-span-1 sticky top-28 h-fit">
+
+                <div class="bg-white p-6 rounded-2xl shadow-2xl order-summary-container border-2 border-gray-100">
+                    <h3 class="text-2xl font-bold mb-4 border-b pb-2 text-dark" data-key="cart_title">Votre Commande</h3>
+                    
+                    <div id="service-status-indicator" class="p-3 mb-4 rounded-xl text-center font-extrabold text-white text-lg transition-colors duration-300">
+                        </div>
+                    <div id="cart-items" class="min-h-[100px] mb-4">
+                        <p class="text-gray-500 italic text-center pt-4" data-key="cart_empty">Votre panier est vide.</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="location-input" class="block text-sm font-medium text-gray-700 mb-1" data-key="location_label">Lieu de Livraison :</label>
+                        <input type="text" id="location-input" placeholder="Ex: Bureau, Bâtiment du Temple du Pieu de Kinshasa" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-secondary focus:border-secondary shadow-inner text-base">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="delivery-date-input" class="block text-sm font-medium text-gray-700 mb-1" data-key="date_label">Date de Livraison Souhaitée :</label>
+                        <input type="date" id="delivery-date-input" 
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-secondary focus:border-secondary shadow-inner text-base"
+                                required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="delivery-time-input" class="block text-sm font-medium text-gray-700 mb-1" data-key="time_label">Heure de Livraison Souhaitée :</label>
+                        <input type="time" id="delivery-time-input" 
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-secondary focus:border-secondary shadow-inner text-base"
+                                required>
+                        <p class="text-xs text-gray-500 mt-1" data-key="time_constraint">Livraison possible entre [Min Time] et 20:30.</p>
+                    </div>
+
+                    <div id="free-delivery-banner" class="p-4 mb-4 bg-green-100 text-green-800 rounded-xl shadow-xl border-2 border-green-500 hidden">
+                        <p class="font-extrabold text-lg text-green-700" data-key="free_delivery_title">LIVRAISON OFFERTE ! (Temple du Pieu)</p>
+                        <p class="text-sm" data-key="free_delivery_text">Félicitations ! La livraison est gratuite. 👉 Les pourboires sont les bienvenus !</p>
+                    </div>
+                    
+                    <div class="space-y-2 border-t pt-3 mt-3">
+                        <div class="flex justify-between font-medium text-gray-700">
+                            <span data-key="subtotal_label">Sous-total :</span>
+                            <span id="subtotal-cdf">0 FC</span>
+                        </div>
+                        <div class="flex justify-between font-medium text-gray-700">
+                            <span data-key="delivery_fee_label">Frais de livraison :</span>
+                            <span id="delivery-fee-cdf">0 FC</span>
+                        </div>
+                        <div class="flex justify-between text-xl font-bold border-t pt-2 mt-2 text-dark">
+                            <span data-key="total_label">TOTAL À PAYER :</span>
+                            <span id="total-cdf" class="text-secondary">0 FC</span>
+                        </div>
+                    </div>
+                    
+                    <button id="whatsapp-order-btn" class="w-full mt-6 bg-green-500 text-white font-extrabold py-3 px-4 rounded-lg shadow-2xl hover:bg-green-600 transition-all flex items-center justify-center whatsapp-btn-pulse disabled:opacity-50" onclick="showConfirmationModal()" disabled>
+                        <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.42 1.34 4.9.09.15.11.3.06.47l-.92 3.37c-.1.35-.02.73.23 1.01.2.22.48.33.77.33.09 0 .18-.01.27-.05l3.52-1.42c.16-.07.35-.07.51-.03 1.37.53 2.87.81 4.4 0 .42-.16.81-.37 1.16-.62l.21-.12.2-.11c.25-.14.47-.32.68-.53l.11-.12.1-.11c.4-.41.74-.88.99-1.4.15-.31.32-.63.46-.98.07-.17.21-.29.38-.28 2.05.02 3.99-1.2 4.77-3.26 1.08-2.89.28-6.19-2.02-8.51-2.27-2.3-5.59-3.05-8.54-2.18zm4.33 11.89c-.1.22-.2.43-.33.61-.13.19-.28.36-.45.52-.16.15-.35.26-.56.36-.2.1-.42.15-.65.15s-.45-.05-.65-.15c-.2-.1-.38-.21-.56-.36-.17-.16-.32-.33-.45-.52-.13-.19-.23-.4-.33-.61-.21-.42-.31-.88-.31-1.35 0-.25.04-.49.12-.73.08-.23.2-.45.34-.66.15-.21.32-.4.53-.57.21-.17.44-.31.68-.42.24-.12.49-.18.75-.18.26 0 .5.06.73.18.23.11.45.25.66.42.21.17.39.36.53.57.15.21.26.43.34.66.08.24.12.48.12.73 0 .47-.1.93-.31 1.35z"/></svg>
+                        <span data-key="order_button">Envoyer la Commande (WhatsApp)</span>
+                    </button>
+                    
+                    <div id="error-message" class="text-red-500 text-sm mt-3 text-center hidden" data-key="error_location">
+                        Veuillez entrer votre lieu de livraison, sélectionner une date ET une heure.
+                    </div>
+                </div>
+            </aside>
+            
+        </div>
+    </main>
+
+    <footer class="bg-dark text-gray-400 text-center p-6 mt-10">
+        <p>&copy; 2025 Banikilabs Food. Kinshasa Restauration Rapide. Tous droits réservés.</p>
+    </footer>
+
+    <a href="https://banikilabs.page.gd" target="_blank" class="floating-footer-link">
+        powered by banikilabs
+    </a>
+    
+    <div id="confirmation-modal" class="modal-overlay" onclick="if (event.target.id === 'confirmation-modal') hideConfirmationModal()">
+        <div class="modal-content">
+            <div class="bg-secondary text-white p-4 rounded-t-2xl flex justify-between items-center shadow-lg">
+                <h3 class="text-xl font-bold" data-key="modal_title">Récapitulatif de votre commande</h3>
+                <button onclick="hideConfirmationModal()" class="text-white hover:text-primary transition-colors text-2xl font-light leading-none">&times;</button>
+            </div>
+
+            <div id="invoice-to-capture" class="p-6 bg-white">
+                <div class="text-center mb-4">
+                    <p class="font-extrabold text-2xl text-dark mb-1">Banikilabs Food</p>
+                    <p class="text-sm text-gray-500">Kinshasa | Commande #<span id="order-id">0000</span></p>
+                </div>
+
+                <h4 class="text-lg font-semibold border-b pb-1 mb-2 text-dark" data-key="modal_datetime_title">Date et Heure de Livraison</h4>
+                <div class="mb-4 text-center">
+                    <p class="text-gray-700 font-bold text-xl">
+                        <span id="modal-date-text"></span> | <span id="modal-time-text" class="text-secondary"></span>
+                    </p>
+                </div>
+
+                <h4 class="text-lg font-semibold border-b pb-1 mb-2 text-dark" data-key="modal_items_title">Articles commandés</h4>
+                <div id="modal-items-list" class="space-y-2 border-b border-dashed pb-3 mb-4">
+                    </div>
+
+                <h4 class="text-lg font-semibold border-b pb-1 mb-2 text-dark" data-key="modal_location_title">Détails de la livraison</h4>
+                <div class="mb-4">
+                    <p class="text-gray-700">
+                        <span class="font-medium" data-key="modal_location_label">Lieu de livraison :</span>
+                        <span id="modal-location-text" class="italic"></span>
+                    </p>
+                </div>
+
+                <h4 class="text-lg font-semibold border-b pb-1 mb-2 text-dark" data-key="modal_summary_title">Total de la facture</h4>
+                <div id="modal-totals-list" class="space-y-1">
+                    </div>
+                
+                <div id="modal-promo-message" class="mt-4 p-3 text-center bg-yellow-50 rounded-lg border border-yellow-300">
+                    <p class="font-bold text-sm text-dark" data-key="promo_delivery_title">
+                        Livraison GRATUITE au Bâtiment du Temple du Pieu de Kinshasa !
+                    </p>
+                    <p class="text-xs text-gray-600 mt-1" data-key="promo_delivery_tip">
+                        👉 Les pourboires sont les bienvenus pour améliorer la qualité de notre service. Merci pour votre commande ! 👈
+                    </p>
+                </div>
+            </div>
+
+            <div class="p-6 pt-0 space-y-3">
+                <button class="w-full bg-primary text-dark font-extrabold py-3 rounded-lg shadow-xl hover:bg-yellow-500 transition-colors" onclick="downloadInvoice()">
+                    <span data-key="modal_download_button">Télécharger la Facture (PNG)</span>
+                </button>
+                <button class="w-full bg-green-500 text-white font-extrabold py-3 rounded-lg shadow-xl hover:bg-green-600 transition-colors" onclick="redirectToWhatsApp()">
+                    <span data-key="modal_whatsapp_button">Confirmer et Envoyer la commande à WhatsApp</span>
+                </button>
+                <button class="w-full text-sm text-gray-500 hover:text-secondary transition-colors" onclick="hideConfirmationModal()">
+                    <span data-key="modal_cancel_button">Modifier ma commande</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Configuration and Data (CDF Only) ---
+        const WA_NUMBER = '+243978415814';
+        const WA_BASE_URL = `https://wa.me/${WA_NUMBER}?text=`;
+        // Mot-clé mis à jour pour la livraison gratuite
+        const FREE_DELIVERY_KEYWORD = 'temple du pieu de kinshasa'; 
+        const DELIVERY_FEE_CDF = 5000; // Frais de livraison fixés à 5000 FC
+        
+        // CONSTANTES POUR LE STATUT LIVE
+        const START_LIVE_TIME = '07:00'; // 7 AM (Ouverture de livraison)
+        const END_DELIVERY_TIME = '20:30'; // 20h30 (Heure limite de livraison)
+        const END_LIVE_TIME = '21:00'; // 9 PM (Fermeture du service global pour la journée)
+
+
+        let currentLang = 'fr';
+        let cart = {}; // {itemId: quantity, ...}
+        let selectedCategory = 'Breakfast'; // Default category
+
+        // Menu de nourriture (Les prix sont désormais en CDF, `price_cdf`)
+        const menu = [
+            // --- COMMON ITEMS (Drinks) ---
+            { id: 1, fr: 'Eau Minérale', en: 'Mineral Water', sw: 'Maji ya chupa', price_cdf: 750, desc_fr: 'Bouteille d\'eau fraîche.', desc_en: 'Bottle of fresh water.', desc_sw: 'Chupa ya maji baridi.', icon: '💧', placeholder_text: 'Eau', category: 'Common' },
+            { id: 2, fr: 'Jus de Fruits (Local)', en: 'Local Fruit Juice', sw: 'Juisi ya Matunda (Ya kienyeji)', price_cdf: 3000, desc_fr: 'Sélection de jus de fruits locaux.', desc_en: 'Selection of local fruit juices.', desc_sw: 'Uchaguzi wa juisi za matunda za kienyeji.', icon: '🍹', placeholder_text: 'Jus', category: 'Common' },
+            
+            // --- PETIT DÉJEUNER (Breakfast) ---
+            { id: 10, fr: 'Pain Mayi (Beignets)', en: 'Doughnuts (Beignets)', sw: 'Maandazi (Vibibi)', price_cdf: 300, desc_fr: 'Beignets congolais classiques.', desc_en: 'Classic Congolese doughnuts.', desc_sw: 'Maandazi ya kawaida ya Kongo.', icon: '🍩', placeholder_text: 'Beignet', category: 'Breakfast' },
+            { id: 11, fr: 'Spaghetti', en: 'Spaghetti', sw: 'Spaghetti', price_cdf: 2500, desc_fr: 'Spaghetti aux légumes et petite viande.', desc_en: 'Spaghetti with vegetables and a bit of meat.', desc_sw: 'Spaghetti na mboga na nyama kidogo.', icon: '🍝', placeholder_text: 'Spaghetti', category: 'Breakfast' },
+            { id: 12, fr: 'Pain Kangajourne', en: 'Kangajourne Bread', sw: 'Mkate wa Kangajourne', price_cdf: 700, desc_fr: 'Pain Kangajourne traditionnel.', desc_en: 'Traditional Kangajourne bread.', desc_sw: 'Mkate wa Kangajourne wa kitamaduni.', icon: '🥖', placeholder_text: 'Pain', category: 'Breakfast' },
+            { id: 16, fr: 'Petit Pain', en: 'Small Bread', sw: 'Mkate Mdogo', price_cdf: 800, desc_fr: 'Petit pain pour l\'accompagnement.', desc_en: 'Small bread for accompaniment.', desc_sw: 'Mkate mdogo kwa kuambatana.', icon: '🍞', placeholder_text: 'Petit Pain', category: 'Breakfast' },
+            { id: 17, fr: 'Pain Normal', en: 'Normal Bread', sw: 'Mkate wa Kawaida', price_cdf: 1000, desc_fr: 'Pain de taille normale.', desc_en: 'Normal sized bread.', desc_sw: 'Mkate wa ukubwa wa kawaida.', icon: '🥖', placeholder_text: 'Pain Normal', category: 'Breakfast' },
+            { id: 18, fr: 'Pain Supérieur', en: 'Premium Bread', sw: 'Mkate Bora', price_cdf: 1500, desc_fr: 'Pain de qualité supérieure.', desc_en: 'Higher quality bread.', desc_sw: 'Mkate wa ubora wa juu.', icon: '🥐', placeholder_text: 'Pain Supérieur', category: 'Breakfast' },
+            { id: 13, fr: 'Thé de Tangawifi', en: 'Ginger Tea', sw: 'Chai ya Tangawizi', price_cdf: 1500, desc_fr: 'Infusion de gingembre frais.', desc_en: 'Fresh ginger infusion.', desc_sw: 'Kinywaji cha tangawizi safi.', icon: '🍵', placeholder_text: 'Thé', category: 'Breakfast' },
+            { id: 14, fr: 'Thé de Citronelle avec Lait Concentré', en: 'Lemongrass Tea with Condensed Milk', sw: 'Chai ya Mchaichai na Maziwa ya Mgando', price_cdf: 1500, desc_fr: 'Thé de citronnelle servi avec du lait concentré.', desc_en: 'Lemongrass tea served with condensed milk.', desc_sw: 'Chai ya mchaichai inatumiwa na maziwa ya mgando.', icon: '🥛', placeholder_text: 'Thé/Lait', category: 'Breakfast' },
+            { id: 15, fr: 'Oeuf (Omelette/Dur)', en: 'Egg (Omelette/Hard-boiled)', sw: 'Yai (Omeleti/Kuchemshwa)', price_cdf: 1000, desc_fr: 'Œuf au choix (omelette ou dur).', desc_en: 'Egg of choice (omelette or hard-boiled).', desc_sw: 'Yai la chaguo (omeleti au hard-boiled).', icon: '🥚', placeholder_text: 'Oeuf', category: 'Breakfast' },
+
+            // --- DÉJEUNER (Lunch) ---
+            { id: 20, fr: 'Fufu', en: 'Fufu', sw: 'Fufu', price_cdf: 1000, desc_fr: 'Pâte de manioc ou de maïs, plat de base.', desc_en: 'Cassava or corn paste, staple food.', desc_sw: 'Unga wa mihogo au mahindi, chakula kikuu.', icon: '🍚', placeholder_text: 'Fufu', category: 'Lunch' },
+            { id: 21, fr: 'Pondu (Feuilles de Manioc)', en: 'Pondu (Cassava Leaves)', sw: 'Pondu (Majani ya Mihogo)', price_cdf: 4000, desc_fr: 'Feuilles de manioc cuites à l\'étouffée.', desc_en: 'Cassava leaves slow-cooked.', desc_sw: 'Majani ya mihogo yaliyopikwa polepole.', icon: '🥬🍲', placeholder_text: 'Pondu', category: 'Lunch' },
+            { id: 22, fr: 'Fumbwa', en: 'Fumbwa Stew', sw: 'Mchuzi wa Fumbwa', price_cdf: 1500, desc_fr: 'Feuilles de manioc cuites avec des légumes.', desc_en: 'Cooked cassava leaves with vegetables.', desc_sw: 'Majani ya mihogo yaliyopikwa na mboga.', icon: '🍗🥬', placeholder_text: 'Fumbwa', category: 'Lunch' },
+            { id: 23, fr: 'Matembélé (Feuille de Patate Douce)', en: 'Matembele (Sweet Potato Leaves)', sw: 'Matembele (Majani ya Viazi Vitamu)', price_cdf: 1500, desc_fr: 'Feuilles de patate douce cuites.', desc_en: 'Cooked sweet potato leaves.', desc_sw: 'Majani ya viazi vitamu yaliyopikwa.', icon: '🍠🌱', placeholder_text: 'Matembélé', category: 'Lunch' },
+            { id: 24, fr: 'Haricot', en: 'Beans', sw: 'Maharagwe', price_cdf: 1500, desc_fr: 'Plat de haricots cuisinés à la congolaise.', desc_en: 'Congolese-style cooked beans.', desc_sw: 'Maharagwe yaliyopikwa kwa mtindo wa Kongo.', icon: '🫘', placeholder_text: 'Haricot', category: 'Lunch' },
+            { id: 25, fr: 'Riz', en: 'Rice', sw: 'Wali', price_cdf: 1000, desc_fr: 'Riz blanc pour accompagnement.', desc_en: 'White rice for accompaniment.', desc_sw: 'Wali mweupe kwa kuambatana.', icon: '🍚', placeholder_text: 'Riz', category: 'Lunch' },
+            { id: 26, fr: 'Poisson Frit', en: 'Fried Fish', sw: 'Samaki wa Kukaanga', price_cdf: 3000, desc_fr: 'Poisson frais frit.', desc_en: 'Fresh fried fish.', desc_sw: 'Samaki safi wa kukaanga.', icon: '🐟', placeholder_text: 'Poisson', category: 'Lunch' },
+            { id: 27, fr: 'Poulet Rôti/Frit', en: 'Roasted/Fried Chicken', sw: 'Kuku Choma/Kukaanga', price_cdf: 5000, desc_fr: 'Morceau de poulet rôti ou frit.', desc_en: 'Piece of roasted or fried chicken.', desc_sw: 'Kipande cha kuku choma au kukaanga.', icon: '🍗', placeholder_text: 'Poulet', category: 'Lunch' },
+            { id: 28, fr: 'Boeuf', en: 'Beef', sw: 'Nyama ya Ng\'ombe', price_cdf: 4500, desc_fr: 'Morceau de bœuf en sauce ou frit.', desc_en: 'Piece of beef in sauce or fried.', desc_sw: 'Kipande cha nyama ya ng\'ombe kwenye mchuzi ou kukaangwa.', icon: '🥩', placeholder_text: 'Boeuf', category: 'Lunch' },
+
+            // --- DÎNER (Dinner) ---
+            { id: 30, fr: 'Chikwangue', en: 'Chikwangue', sw: 'Chikwangue', price_cdf: 2000, desc_fr: 'Pâte de manioc fermentée (préférée le soir).', desc_en: 'Fermented cassava paste (preferred for dinner).', desc_sw: 'Unga wa mihogo uliochachuka (chakula cha jioni kinachopendwa).', icon: '🍚🐟', placeholder_text: 'Chikwangue', category: 'Dinner' },
+            { id: 31, fr: 'Fufu', en: 'Fufu', sw: 'Fufu', price_cdf: 1000, desc_fr: 'Pâte de manioc ou de maïs, plat de base.', desc_en: 'Cassava or corn paste, staple food.', desc_sw: 'Unga wa mihogo au mahindi, chakula kikuu.', icon: '🍚', placeholder_text: 'Fufu', category: 'Dinner' },
+            { id: 32, fr: 'Gros Poisson Salé', en: 'Large Salted Fish', sw: 'Samaki Mkubwa wa Chumvi', price_cdf: 2500, desc_fr: 'Morceau de gros poisson salé et frit.', desc_en: 'Piece of large salted and fried fish.', desc_sw: 'Kipande cha samaki mkubwa wa chumvi na kukaangwa.', icon: '🎣', placeholder_text: 'Poisson', category: 'Dinner' },
+            { id: 33, fr: 'Chenille (Sautées)', en: 'Caterpillars (Sautéed)', sw: 'Viwavi (Kukaangwa)', price_cdf: 2000, desc_fr: 'Plat de chenilles, spécialité congolaise.', desc_en: 'Sautéed caterpillars, Congolese delicacy.', desc_sw: 'Chakula cha viwavi, kitamu cha Kongo.', icon: '🐛', placeholder_text: 'Chenille', category: 'Dinner' },
+            { id: 34, fr: 'Ngombe (Boeuf) Braisé', en: 'Braised Beef (Ngombe)', sw: 'Nyama ya Ng\'ombe Choma', price_cdf: 6000, desc_fr: 'Morceau de bœuf braisé au charbon.', desc_en: 'Piece of charcoal-braised beef.', desc_sw: 'Kipande cha nyama ya ng\'ombe choma.', icon: '🍖', placeholder_text: 'Ngombe', category: 'Dinner' },
+            { id: 35, fr: 'Poulet Mayo (Salade)', en: 'Chicken Mayo Salad', sw: 'Saladi ya Kuku na Mayo', price_cdf: 4000, desc_fr: 'Salade de poulet avec mayonnaise (pour un repas léger).', desc_en: 'Chicken salad with mayonnaise (for a light meal).', desc_sw: 'Saladi ya kuku na mayonnaise (kwa chakula chepesi).', icon: '🥗', placeholder_text: 'Salade', category: 'Dinner' }
+        ];
+
+        // --- Translation Data ---
+        const translations = {
+            fr: {
+                welcome_title: '👋 Bienvenue chez Banikilabs Food !',
+                welcome_text: 'Découvrez les saveurs authentiques et l\'ambiance conviviale de la **restauration rapide** de Kinshasa. Commandez rapidement, nous nous occupons du reste !',
+                buffet_info_title: 'Nouveau : Le service **Buffet** est bientôt disponible !',
+                buffet_info_text: 'Restez à l\'écoute pour nos nouvelles formules de repas de groupe.',
+                prominent_banner_title: 'LIVRAISON GRATUITE ! 🤩',
+                prominent_banner_location: 'Pour toutes les commandes livrées au **Bâtiment du Temple du Pieu de Kinshasa** (5000 FC pour les autres zones).',
+                prominent_banner_tip: 'Vos pourboires sont les bienvenus pour un service toujours meilleur ! 🙏',
+                cat_breakfast: 'Petit Déjeuner',
+                cat_lunch: 'Déjeuner',
+                cat_dinner: 'Dîner',
+                menu_title: 'Notre Menu du Jour : ',
+                free_delivery_title: 'LIVRAISON OFFERTE ! (Temple du Pieu)',
+                free_delivery_text: 'Félicitations ! La livraison est gratuite. 👉 Les pourboires sont les bienvenus !',
+                cart_title: 'Votre Commande',
+                cart_empty: 'Votre panier est vide.',
+                location_label: 'Lieu de Livraison :',
+                date_label: 'Date de Livraison Souhaitée :', 
+                time_label: 'Heure de Livraison Souhaitée :',
+                time_constraint: `Livraison possible entre [Min Time] et ${END_DELIVERY_TIME}.`, 
+                time_constraint_closed_sunday: `Service CLÔTURÉ. Nous sommes fermés le Dimanche. Prochaine ouverture Lundi à [Next Open].`,
+                time_constraint_closed_night: `Le service est CLÔTURÉ pour les livraisons d'aujourd'hui. Prochaine ouverture à [Next Open].`,
+                subtotal_label: 'Sous-total :',
+                delivery_fee_label: 'Frais de livraison :',
+                total_label: 'TOTAL À PAYER :',
+                add_to_cart: 'Ajouter',
+                order_button: 'Envoyer la Commande (WhatsApp)',
+                error_location: 'Veuillez entrer votre lieu de livraison, sélectionner une date ET une heure.',
+                // TEXTES LIVE STATUS
+                live_open: 'OUVERT',
+                live_closed_sunday: 'CLÔTURÉ (Dimanche)', // Utilisé pour le Dimanche
+                live_closed_night: 'Service Nuit', // Utilisé pour Mon-Sam en dehors de 07:00-21:00
+                // Modal and WA texts
+                modal_title: 'Récapitulatif de votre commande',
+                modal_items_title: 'Articles commandés',
+                modal_location_title: 'Détails de la livraison',
+                modal_datetime_title: 'Date et Heure de Livraison',
+                modal_location_label: 'Lieu de livraison',
+                modal_summary_title: 'Total de la facture',
+                promo_delivery_title: 'Livraison GRATUITE au Bâtiment du Temple du Pieu de Kinshasa !',
+                promo_delivery_tip: '👉 Les pourboires sont les bienvenus pour améliorer la qualité de notre service. Merci pour votre commande ! 👈',
+                modal_download_button: 'Télécharger la Facture (PNG)',
+                modal_whatsapp_button: 'Confirmer et Envoyer la commande à WhatsApp',
+                modal_cancel_button: 'Modifier ma commande',
+                wa_greeting: 'Bonjour Banikilabs Food, je souhaite passer la commande suivante :',
+                wa_order_details: '--- Articles commandés ---',
+                wa_location_section: '--- Détails de la livraison ---',
+                wa_location: 'Lieu :',
+                wa_time: 'Heure :',
+                wa_date: 'Date :',
+                wa_total_section: '--- TOTAL DE LA FACTURE ---',
+                wa_total_cdf_label: 'TOTAL À PAYER :',
+                wa_cdf: ' FC',
+                wa_free_delivery_note: '(Frais de livraison offerts pour le Temple du Pieu!)'
+            },
+            en: {
+                welcome_title: '👋 Welcome to Banikilabs Food!',
+                welcome_text: 'Discover the authentic flavors and friendly atmosphere of **fast food** in Kinshasa. Order quickly, we\'ll take care of the rest!',
+                buffet_info_title: 'New: The **Buffet** service is coming soon!',
+                buffet_info_text: 'Stay tuned for our new group meal formulas.',
+                prominent_banner_title: 'FREE DELIVERY! 🤩',
+                prominent_banner_location: 'For all orders delivered to the **Kinshasa Stake Temple Building** (5000 FC for other areas).',
+                prominent_banner_tip: 'Your tips are welcome for ever better service! 🙏',
+                cat_breakfast: 'Breakfast',
+                cat_lunch: 'Lunch',
+                cat_dinner: 'Dinner',
+                menu_title: 'Our Menu of the Day: ',
+                free_delivery_title: 'FREE DELIVERY! (Temple Stake)',
+                free_delivery_text: 'Congratulations! Delivery is free. 👉 Tips are welcome!',
+                cart_title: 'Your Order',
+                cart_empty: 'Your cart is empty.',
+                location_label: 'Delivery Location:',
+                date_label: 'Desired Delivery Date:',
+                time_label: 'Desired Delivery Time:',
+                time_constraint: `Delivery possible between [Min Time] and 20:30.`, 
+                time_constraint_closed_sunday: `Service CLOSED. We are closed on Sunday. Next opening Monday at [Next Open].`, 
+                time_constraint_closed_night: `Service is CLOSED for today's deliveries. Next opening at [Next Open].`,
+                subtotal_label: 'Subtotal:',
+                delivery_fee_label: 'Delivery Fee:',
+                total_label: 'TOTAL TO PAY:',
+                add_to_cart: 'Add',
+                order_button: 'Send Order (WhatsApp)',
+                error_location: 'Please enter your delivery location, select a date AND a time.',
+                live_open: 'OPEN',
+                live_closed_sunday: 'CLOSED (Sunday)',
+                live_closed_night: 'Night Service',
+                modal_title: 'Order Summary',
+                modal_items_title: 'Ordered Items',
+                modal_location_title: 'Delivery Details',
+                modal_datetime_title: 'Date and Delivery Time',
+                modal_location_label: 'Delivery Location',
+                modal_summary_title: 'Invoice Total',
+                promo_delivery_title: 'FREE Delivery at the Kinshasa Stake Temple Building!',
+                promo_delivery_tip: '👉 Tips are welcome to improve the quality of our service. Thank you for your order! 👈',
+                modal_download_button: 'Download Invoice (PNG)',
+                modal_whatsapp_button: 'Confirm and Send Order to WhatsApp',
+                modal_cancel_button: 'Modify my order',
+                wa_greeting: 'Hello Banikilabs Food, I would like to place the following order:',
+                wa_order_details: '--- Ordered Items ---',
+                wa_location_section: '--- Delivery Details ---',
+                wa_location: 'Location:',
+                wa_time: 'Time:',
+                wa_date: 'Date:',
+                wa_total_section: '--- INVOICE TOTAL ---',
+                wa_total_cdf_label: 'TOTAL TO PAY:',
+                wa_cdf: ' FC',
+                wa_free_delivery_note: '(Delivery fees waived for the Temple Stake!)'
+            },
+            sw: {
+                welcome_title: '👋 Karibu Banikilabs Food!',
+                welcome_text: 'Gundua ladha halisi na mazingira rafiki ya **vyakula vya haraka** huko Kinshasa. Agiza haraka, tutashughulikia mengine!',
+                buffet_info_title: 'Mpya: Huduma ya **Buffet** inakuja hivi karibuni!',
+                buffet_info_text: 'Endelea kufuatilia kwa menyu zetu mpya za chakula cha kikundi.',
+                prominent_banner_title: 'UTOAJI BILA MALIPO! 🤩',
+                prominent_banner_location: 'Kwa maagizo yote yanayoletwa kwenye **Jengo la Hekalu la Kigingi la Kinshasa** (5000 FC kwa maeneo mengine).',
+                prominent_banner_tip: 'Shukrani zako zinakaribishwa kwa huduma bora zaidi! 🙏',
+                cat_breakfast: 'Kifungua Kinywa',
+                cat_lunch: 'Chakula cha Mchana',
+                cat_dinner: 'Chakula cha Jioni',
+                menu_title: 'Menyu Yetu ya Siku: ',
+                free_delivery_title: 'UTOAJI BILA MALIPO! (Hekalu la Kigingi)',
+                free_delivery_text: 'Hongera! Utoaji ni bure. 👉 Shukrani zinakaribishwa!',
+                cart_title: 'Agizo Lako',
+                cart_empty: 'Risasi yako haina kitu.',
+                location_label: 'Mahali pa Kuletewa:',
+                date_label: 'Tarehe ya Kuletewa Inayotakiwa:', 
+                time_label: 'Muda Unaotakiwa wa Kuletewa:',
+                time_constraint: `Utoaji unawezekana kati ya [Min Time] na 20:30.`, 
+                time_constraint_closed_sunday: `Huduma IMEFUNGWA. Tumefunga Jumapili. Ufunguzi unaofuata Jumatatu saa [Next Open].`,
+                time_constraint_closed_night: `Huduma IMEFUNGWA kwa utoaji wa leo. Ufunguzi unaofuata saa [Next Open].`,
+                subtotal_label: 'Jumla ndogo:',
+                delivery_fee_label: 'Ada ya Utoaji:',
+                total_label: 'JUMLA YA KULIPA:',
+                add_to_cart: 'Ongeza',
+                order_button: 'Tuma Agizo (WhatsApp)',
+                error_location: 'Tafadhali ingiza mahali pako pa kuletewa, chagua tarehe NA muda.',
+                live_open: 'FUNGUWA',
+                live_closed_sunday: 'IMEGUNGWA (Jumapili)',
+                live_closed_night: 'Huduma ya Usiku',
+                modal_title: 'Muhtasari wa Agizo',
+                modal_items_title: 'Vitu Vilivyoagizwa',
+                modal_location_title: 'Maelezo ya Utoaji',
+                modal_datetime_title: 'Tarehe na Muda wa Utoaji',
+                modal_location_label: 'Mahali pa Kuletewa',
+                modal_summary_title: 'Jumla ya Ankara',
+                promo_delivery_title: 'Utoaji BILA MALIPO kwenye Jengo la Hekalu la Kigingi la Kinshasa!',
+                promo_delivery_tip: '👉 Shukrani zinakaribishwa ili kuboresha ubora wa huduma yetu. Asante kwa agizo lako! 👈',
+                modal_download_button: 'Pakua Ankara (PNG)',
+                modal_whatsapp_button: 'Thibitisha na Tuma Agizo kwa WhatsApp',
+                modal_cancel_button: 'Badilisha agizo langu',
+                wa_greeting: 'Habari Banikilabs Food, ningependa kuweka agizo lifuatalo:',
+                wa_order_details: '--- Vitu Vilivyoagizwa ---',
+                wa_location_section: '--- Maelezo ya Utoaji ---',
+                wa_location: 'Mahali:',
+                wa_time: 'Muda:',
+                wa_date: 'Tarehe:',
+                wa_total_section: '--- JUMLA YA ANKARA ---',
+                wa_total_cdf_label: 'TOTAL TO PAY:',
+                wa_cdf: ' FC',
+                wa_free_delivery_note: '(Ada za utoaji zimeondolewa kwa Hekalu la Kigingi!)'
+            }
+        };
+
+
+        // --- Helper Functions ---
+
+        /** Checks if a given date is Sunday (0 = Sunday). */
+        function isServiceClosedAllDay(date) {
+            // Note: date can be a Date object or a date string (e.g., "YYYY-MM-DD")
+            const d = new Date(date);
+            return d.getDay() === 0; // 0 is Sunday
+        }
+
+        /** Checks if the service is currently within the live operational window (07:00 to 21:00) using the NOW time, and is not Sunday. */
+        function isLiveServiceActive() {
+            const now = new Date();
+            
+            // 1. Check if it's Sunday (Closed all day)
+            if (isServiceClosedAllDay(now)) {
+                return false;
+            }
+
+            // 2. Check time (Mon-Sat: 07:00 to 21:00)
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTime = currentHour * 60 + currentMinute;
+            
+            const startParts = START_LIVE_TIME.split(':').map(Number);
+            const startTime = startParts[0] * 60 + startParts[1];
+            
+            const endParts = END_LIVE_TIME.split(':').map(Number);
+            const endTime = endParts[0] * 60 + endParts[1];
+
+            // Service is active between 07:00 (inclusive) and 21:00 (exclusive)
+            return currentTime >= startTime && currentTime < endTime;
+        }
+
+        /** Calculates the minimum valid delivery time based on the selected date (HH:MM format). */
+        function getMinDeliveryTime(deliveryDateStr) {
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            
+            const startParts = START_LIVE_TIME.split(':').map(Number);
+            const minStartTime = new Date();
+            minStartTime.setHours(startParts[0], startParts[1], 0, 0); // 07:00:00 today
+
+            if (deliveryDateStr === todayStr) {
+                // --- TODAY'S DELIVERY LOGIC ---
+                const minTimeDate = new Date(now.getTime() + 30 * 60000); // Current time + 30 minutes
+
+                // If min time is before 07:00, use 07:00
+                if (minTimeDate < minStartTime) {
+                    return START_LIVE_TIME;
+                }
+
+                const hours = String(minTimeDate.getHours()).padStart(2, '0');
+                const minutes = String(minTimeDate.getMinutes()).padStart(2, '0');
+                return `${hours}:${minutes}`;
+
+            } else {
+                // --- FUTURE DELIVERY LOGIC ---
+                // Minimum time is always the service start time (07:00)
+                return START_LIVE_TIME;
+            }
+        }
+        
+        /** Updates the dedicated service status indicator. */
+        function updateServiceStatusIndicator() {
+            const statusEl = document.getElementById('service-status-indicator');
+            const T = translations[currentLang];
+            const now = new Date();
+            const isActive = isLiveServiceActive();
+            const isSunday = isServiceClosedAllDay(now);
+            
+            const formattedNextOpenTime = formatDeliveryTime(START_LIVE_TIME, currentLang);
+
+            if (isActive) {
+                // Service OUVERT (LIVE)
+                const statusText = `${T.live_open} <span class="live-blink">(LIVE)</span>`;
+                statusEl.innerHTML = statusText;
+                statusEl.classList.remove('bg-secondary'); 
+                statusEl.classList.add('bg-accent-green'); 
+                statusEl.classList.add('shadow-xl');
+                
+            } else {
+                // Service FERMÉ / CLÔTURÉ
+                let statusText = '';
+
+                if (isSunday) {
+                    // Dimanche (CLÔTURÉ)
+                    statusText = T.live_closed_sunday;
+                } else {
+                    // Lundi-Samedi, en dehors des heures
+                    statusText = `${T.live_closed_night} (Ouvre à ${formattedNextOpenTime})`;
+                }
+
+                statusEl.innerHTML = statusText;
+                statusEl.classList.remove('bg-accent-green');
+                statusEl.classList.add('bg-secondary'); 
+                statusEl.classList.remove('shadow-xl');
+            }
+        }
+
+        /** Formats a 24h time string (HH:MM). (Kept 24h as requested) */
+        function formatDeliveryTime(time24h, lang) {
+            if (!time24h) return '';
+            return time24h; 
+        }
+        
+        /** Sets min/max limits on date and time inputs, and updates constraints text. */
+        function setDeliveryTimeLimits() {
+            const timeInput = document.getElementById('delivery-time-input');
+            const dateInput = document.getElementById('delivery-date-input');
+            const timeConstraintEl = document.querySelector('[data-key="time_constraint"]');
+            const T = translations[currentLang];
+            const now = new Date();
+
+            // --- 1. Date Limits & Default Value ---
+            const todayStr = now.toISOString().split('T')[0];
+            
+            // Set min date to today
+            dateInput.min = todayStr;
+
+            // Set a max date (7 days from now)
+            const maxDate = new Date();
+            maxDate.setDate(now.getDate() + 7);
+            dateInput.max = maxDate.toISOString().split('T')[0];
+
+            // Default to today if nothing is selected
+            if (!dateInput.value) {
+                dateInput.value = todayStr;
+            }
+            const selectedDateStr = dateInput.value;
+            const isToday = selectedDateStr === todayStr;
+            const isSelectedDateSunday = isServiceClosedAllDay(selectedDateStr);
+
+
+            // --- 2. Time Limits & Constraints ---
+            
+            // This is the minimum required delivery time based on selected date and current time (now + 30 min, but at least 07:00)
+            const minTimeDynamic = getMinDeliveryTime(selectedDateStr);
+            
+            // The rigid daily boundaries (for all days)
+            timeInput.min = START_LIVE_TIME; 
+            timeInput.max = END_DELIVERY_TIME; 
+            
+            // The time that must be respected if TODAY is selected
+            const effectiveMinTime = isToday ? minTimeDynamic : START_LIVE_TIME;
+
+            // --- 3. Validity Check (Based on Selected Time) ---
+
+            let isTimeSelectionValid = true;
+            if (isSelectedDateSunday) {
+                isTimeSelectionValid = false; // Cannot deliver on Sunday
+            } else if (timeInput.value) {
+                // 1. Check against the rigid daily max/min (07:00 - 20:30)
+                if (timeInput.value > END_DELIVERY_TIME || timeInput.value < START_LIVE_TIME) {
+                    isTimeSelectionValid = false;
+                } 
+                // 2. Check against today's dynamic minimum time if applicable
+                else if (isToday && timeInput.value < effectiveMinTime) {
+                    isTimeSelectionValid = false;
+                }
+            } else {
+                isTimeSelectionValid = false; // Must select a time
+            }
+
+
+            // --- 4. Update Constraint Text ---
+            
+            const endDeliveryTimeParts = END_DELIVERY_TIME.split(':').map(Number);
+            const endTimeMinutes = endDeliveryTimeParts[0] * 60 + endDeliveryTimeParts[1];
+            const effectiveMinTimeParts = effectiveMinTime.split(':').map(Number);
+            const effectiveMinTimeMinutes = effectiveMinTimeParts[0] * 60 + effectiveMinTimeParts[1];
+
+            let constraintText = '';
+            const formattedNextOpenTime = formatDeliveryTime(START_LIVE_TIME, currentLang);
+            
+            if (isSelectedDateSunday) {
+                // If it's Sunday
+                constraintText = T.time_constraint_closed_sunday.replace('[Next Open]', formattedNextOpenTime);
+            } else if (isToday && effectiveMinTimeMinutes > endTimeMinutes) {
+                // If it's today and the min delivery time (now + 30 min) is already past 20:30, delivery is closed for today
+                constraintText = T.time_constraint_closed_night.replace('[Next Open]', formattedNextOpenTime);
+            } else {
+                // Service is open OR a future day is selected.
+                const formattedMinTime = formatDeliveryTime(effectiveMinTime, currentLang);
+                const formattedEndTime = formatDeliveryTime(END_DELIVERY_TIME, currentLang);
+                constraintText = T.time_constraint
+                    .replace('[Min Time]', formattedMinTime)
+                    .replace('20:30', formattedEndTime); 
+            }
+
+            // Update time constraint text
+            timeConstraintEl.innerHTML = constraintText;
+            
+            // Store validity state and effective min time for updateCartUI
+            timeInput.setAttribute('data-is-valid', isTimeSelectionValid);
+            timeInput.setAttribute('data-effective-min-time', effectiveMinTime);
+        }
+
+        // --- Core Functions ---
+
+        /** Switches the language based on the select element value and re-renders UI elements. */
+        function switchLanguage(newLang) {
+            currentLang = newLang;
+            
+            // Re-render UI elements that need language updates
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    let newText = translations[currentLang][key];
+                    if (key === 'time_constraint') {
+                        newText = newText.replace('20:30', END_DELIVERY_TIME);
+                    }
+                    el.innerHTML = newText;
+                }
+            });
+
+            // Re-render components that rely heavily on language
+            selectCategory(selectedCategory);
+            setDeliveryTimeLimits(); // Re-set limits and update text with new language
+            updateCartUI();
+        }
+
+        /** Selects a category and updates the menu display. */
+        function selectCategory(categoryKey, clickedButton) {
+            // 1. Update the selected category state
+            selectedCategory = categoryKey;
+            
+            // 2. Update the menu title
+            const T = translations[currentLang];
+            const categoryName = T[`cat_${categoryKey.toLowerCase()}`] || categoryKey; // Fallback to key
+            document.getElementById('menu-title-display').textContent = T.menu_title + categoryName;
+
+            // 3. Update button active state (Glow/Dim)
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-primary', 'text-dark');
+                btn.classList.add('bg-dark', 'text-white'); // Dim style
+            });
+            const targetButton = clickedButton || document.querySelector(`.category-btn[data-category="${categoryKey}"]`);
+            if (targetButton) {
+                targetButton.classList.add('active', 'bg-primary', 'text-dark');
+                targetButton.classList.remove('bg-dark', 'text-white');
+            }
+            
+            // 4. Render Items
+            const menuList = document.getElementById('menu-list');
+            menuList.innerHTML = ''; // Clear previous items
+
+            const filteredMenu = menu.filter(item => item.category === categoryKey || item.category === 'Common');
+            filteredMenu.forEach(item => {
+                const name = item[currentLang];
+                const desc = item[`desc_${currentLang}`];
+                const priceCDF = item.price_cdf; // Price directly in CDF
+                const placeholderText = item.placeholder_text; 
+                const buttonText = `<span class="text-lg font-extrabold">${T.add_to_cart}</span>`; 
+
+                const cardHtml = `
+                    <div class="menu-card bg-white p-5 rounded-2xl shadow-xl flex flex-col justify-between border-l-8 border-${item.category === 'Common' ? 'primary' : 'secondary'}">
+                        <div class="image-placeholder">
+                            ${placeholderText} ${item.icon} 
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-dark mb-1">${name}</h4>
+                            <p class="text-gray-500 text-sm italic mb-4">${desc}</p>
+                        </div>
+                        <div class="flex items-center justify-between mt-auto pt-3 border-t-2 border-gray-100">
+                            <div>
+                                <span class="text-2xl font-extrabold text-secondary">${priceCDF.toLocaleString('fr-CD')} FC</span>
+                            </div>
+                            <button class="add-to-cart-btn bg-primary text-dark py-2 px-5 rounded-full shadow-2xl hover:bg-yellow-500 transition-colors" data-id="${item.id}" onclick="addToCart(${item.id})">
+                                ${buttonText}
+                            </button>
+                        </div>
+                    </div>
+                `;
+                menuList.innerHTML += cardHtml;
+            });
+        }
+
+        /** Adds an item to the cart or increases its quantity. */
+        function addToCart(itemId) {
+            const id = String(itemId);
+            cart[id] = (cart[id] || 0) + 1;
+            updateCartUI();
+        }
+
+        /** Updates the quantity of an item in the cart or removes it. */
+        function updateQuantity(itemId, action) {
+            const id = String(itemId);
+            if (action === 'increase') {
+                cart[id] = (cart[id] || 0) + 1;
+            } else if (action === 'decrease') {
+                if (cart[id] > 1) {
+                    cart[id] -= 1;
+                } else {
+                    delete cart[id]; // Remove item if quantity is 1 or less
+                }
+            }
+            updateCartUI();
+        }
+
+        /** Calculates the subtotal, delivery fee, and total, all in CDF. */
+        function calculateTotals(location) {
+            let subtotalCDF = 0;
+            const locationLower = location.toLowerCase().trim();
+            const isFreeDelivery = locationLower.includes(FREE_DELIVERY_KEYWORD);
+
+            Object.keys(cart).forEach(id => {
+                const item = menu.find(i => String(i.id) === id);
+                if (item) {
+                    subtotalCDF += item.price_cdf * cart[id];
+                }
+            });
+
+            const deliveryFee = isFreeDelivery ? 0 : DELIVERY_FEE_CDF;
+            const totalCDF = subtotalCDF + deliveryFee;
+
+            return { subtotalCDF, deliveryFee, totalCDF, isFreeDelivery };
+        }
+
+        /** Renders the cart items and updates the total summary. */
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const locationInput = document.getElementById('location-input');
+            const totals = calculateTotals(locationInput.value);
+            
+            // New CDF elements
+            const subtotalCdfEl = document.getElementById('subtotal-cdf');
+            const deliveryFeeCdfEl = document.getElementById('delivery-fee-cdf');
+
+            const totalCdfEl = document.getElementById('total-cdf');
+            const orderBtn = document.getElementById('whatsapp-order-btn');
+            const freeDeliveryBanner = document.getElementById('free-delivery-banner');
+            const location = locationInput.value.trim();
+            
+            const timeInput = document.getElementById('delivery-time-input');
+            const dateInput = document.getElementById('delivery-date-input');
+            const T = translations[currentLang];
+            
+            setDeliveryTimeLimits(); // Re-run limits and live status check
+            updateServiceStatusIndicator(); // Update the independent live indicator
+
+            // Data extraction for validation
+            const itemsInCart = Object.keys(cart).filter(id => cart[id] > 0);
+            const time = timeInput.value;
+            const date = dateInput.value; 
+            const isTimeValid = timeInput.getAttribute('data-is-valid') === 'true';
+            const effectiveMinTime = timeInput.getAttribute('data-effective-min-time');
+            const isSelectedDateSunday = isServiceClosedAllDay(date);
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            const isToday = date === todayStr;
+
+            // 1. Render Cart Items
+            if (itemsInCart.length === 0) {
+                cartItemsContainer.innerHTML = `<p class="text-gray-500 italic text-center pt-4" data-key="cart_empty">${T.cart_empty}</p>`;
+            } else {
+                let html = '';
+                itemsInCart.forEach(id => {
+                    const item = menu.find(i => String(i.id) === id);
+                    if (item) {
+                        const quantity = cart[id];
+                        const itemTotalCDF = item.price_cdf * quantity;
+                        html += `
+                            <div class="flex justify-between items-center py-2 border-b last:border-b-0">
+                                <span class="text-gray-700 font-medium truncate">${quantity}x ${item[currentLang]}</span>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="updateQuantity(${id}, 'decrease')" class="text-gray-600 bg-gray-200 w-6 h-6 rounded-full hover:bg-gray-300 transition-all text-lg font-bold" aria-label="Retirer un ${item[currentLang]}">-</button>
+                                    <div>
+                                        <span class="font-extrabold text-sm block leading-none">${itemTotalCDF.toLocaleString('fr-CD')} FC</span>
+                                    </div>
+                                    <button onclick="updateQuantity(${id}, 'increase')" class="text-white bg-secondary w-6 h-6 rounded-full hover:opacity-90 transition-all text-lg font-bold" aria-label="Ajouter un ${item[currentLang]}">+</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                cartItemsContainer.innerHTML = html;
+            }
+
+            // 2. Update Totals (CDF only)
+            subtotalCdfEl.textContent = `${totals.subtotalCDF.toLocaleString('fr-CD')} FC`;
+            deliveryFeeCdfEl.textContent = `${totals.deliveryFee.toLocaleString('fr-CD')} FC`;
+            totalCdfEl.textContent = `${totals.totalCDF.toLocaleString('fr-CD')} FC`;
+            
+            // 3. Update Free Delivery Banner
+            if (totals.isFreeDelivery) {
+                freeDeliveryBanner.classList.remove('hidden');
+            } else {
+                freeDeliveryBanner.classList.add('hidden');
+            }
+            
+            // 4. Update Order Button State
+            // The button is active ONLY if: items > 0, location entered, time entered, date entered, AND time is valid (and not Sunday).
+            const canOrder = itemsInCart.length > 0 && location.length > 0 && time && date && isTimeValid && !isSelectedDateSunday;
+
+            orderBtn.disabled = !canOrder;
+
+            // 5. Error Message Handling
+            const errorMessageEl = document.getElementById('error-message');
+            if (!canOrder && itemsInCart.length > 0) {
+                let errorText = '';
+                if (isSelectedDateSunday) {
+                    errorText = T.time_constraint_closed_sunday.replace('Next opening Lundi', T.time_constraint_closed_sunday.includes('Next opening Monday') ? 'Next opening Monday' : 'Prochaine ouverture Lundi');
+                }
+                else if (!location || !date || !time) {
+                    errorText = T.error_location; 
+                } else if (!isTimeValid) {
+                     // Time is entered but is outside the rigid limits or today's min time
+                     const formattedStartTime = formatDeliveryTime(START_LIVE_TIME, currentLang);
+                     const formattedEndTime = formatDeliveryTime(END_DELIVERY_TIME, currentLang);
+                     
+                     if (time < START_LIVE_TIME || time > END_DELIVERY_TIME) {
+                         // Outside 07:00 - 20:30 rigid window
+                         errorText = `L'heure doit être comprise entre ${formattedStartTime} et ${formattedEndTime} pour la livraison.`;
+                     } else if (isToday && time < effectiveMinTime) {
+                         // Too soon for today
+                         errorText = `L'heure minimale pour une livraison aujourd'hui est ${formatDeliveryTime(effectiveMinTime, currentLang)}. Veuillez choisir cette heure ou une heure ultérieure.`;
+                     }
+                }
+                errorMessageEl.textContent = errorText;
+                errorMessageEl.classList.remove('hidden');
+            } else {
+                errorMessageEl.classList.add('hidden');
+            }
+        }
+
+        /** Generates the WhatsApp message content based on the current cart and details. */
+        function getWhatsAppMessage(location, deliveryTime, totals, deliveryDateStr) {
+            const T = translations[currentLang];
+            
+            // Date formatting
+            const dateLocale = currentLang === 'fr' ? 'fr-CD' : (currentLang === 'en' ? 'en-US' : 'sw-CD');
+            
+            // Use deliveryDateStr for the message
+            // Use 12:00 to avoid timezone issues when constructing Date object from simple date string
+            const deliveryDate = new Date(deliveryDateStr + 'T12:00:00'); 
+            const formattedDate = deliveryDate.toLocaleDateString(dateLocale, { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+            
+            // Format delivery time based on language (always 24h format now)
+            const formattedTime = formatDeliveryTime(deliveryTime, currentLang); 
+
+            // Start with a clean greeting
+            let message = `${T.wa_greeting}%0A%0A`; 
+
+            // --- ARTICLES COMMANDÉS ---
+            message += `${T.wa_order_details}%0A`;
+            // 1. Add Item List
+            Object.keys(cart).filter(id => cart[id] > 0).forEach(id => {
+                const item = menu.find(i => String(i.id) === id);
+                const itemTotalCDF = item.price_cdf * cart[id]; 
+                // Format simple: 2x Nom du plat (Prix total en CDF/FC)
+                message += `${cart[id]}x ${item[currentLang]} (${itemTotalCDF.toLocaleString('fr-CD')}${T.wa_cdf})%0A`;
+            });
+
+            // --- ADRESSE DE LIVRAISON ---
+            message += '%0A';
+            message += `${T.wa_location_section}%0A`;
+            message += `${T.wa_location} ${location}%0A`;
+            message += `${T.wa_date} ${formattedDate}%0A`; // DATE
+            message += `${T.wa_time} ${formattedTime}%0A`; // TIME
+
+            // --- PAIEMENT (en CDF/FC) ---
+            message += '%0A';
+            message += `${T.wa_total_section}%0A`;
+            // Total à payer en CDF/FC (SEUL élément en gras)
+            message += `${T.wa_total_cdf_label} *${totals.totalCDF.toLocaleString('fr-CD')}${T.wa_cdf}*%0A`;
+            
+            // Note de livraison gratuite (si applicable)
+            if (totals.isFreeDelivery) {
+                message += ` ${T.wa_free_delivery_note}%0A`;
+            }
+
+            // Message de clôture
+            message += '%0A';
+            message += `Merci ! (Paiement en CDF/FC à la livraison)`;
+            return message;
+        }
+
+        /** Redirects the user to WhatsApp with the generated message. */
+        function redirectToWhatsApp() {
+            const locationInput = document.getElementById('location-input');
+            const timeInput = document.getElementById('delivery-time-input');
+            const dateInput = document.getElementById('delivery-date-input'); // New
+            
+            const location = locationInput.value.trim();
+            const deliveryTime = timeInput.value;
+            const deliveryDateStr = dateInput.value; // New
+            
+            const totals = calculateTotals(location);
+            const message = getWhatsAppMessage(location, deliveryTime, totals, deliveryDateStr);
+            
+            window.open(WA_BASE_URL + encodeURIComponent(message), '_blank');
+        }
+
+        /** Shows the confirmation modal and populates it with order details. */
+        function showConfirmationModal() {
+            const locationInput = document.getElementById('location-input');
+            const timeInput = document.getElementById('delivery-time-input');
+            const dateInput = document.getElementById('delivery-date-input'); 
+            
+            const location = locationInput.value.trim();
+            const deliveryTime = timeInput.value;
+            const deliveryDateStr = dateInput.value; 
+
+            const itemsList = document.getElementById('modal-items-list');
+            const totalsList = document.getElementById('modal-totals-list');
+            const promoMessage = document.getElementById('modal-promo-message');
+            const T = translations[currentLang];
+            const totals = calculateTotals(location);
+
+            // Time and Date
+            const dateLocale = currentLang === 'fr' ? 'fr-CD' : (currentLang === 'en' ? 'en-US' : 'sw-CD');
+            
+            // Use deliveryDateStr for the modal
+            const deliveryDate = new Date(deliveryDateStr + 'T12:00:00'); 
+            const formattedDate = deliveryDate.toLocaleDateString(dateLocale, { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+            
+            const formattedTime = formatDeliveryTime(deliveryTime, currentLang); // Apply 24h format
+
+            // Items List HTML
+            let itemsHtml = '';
+            Object.keys(cart).filter(id => cart[id] > 0).forEach(id => {
+                const item = menu.find(i => String(i.id) === id);
+                if (item) {
+                    const quantity = cart[id];
+                    const itemTotalCDF = item.price_cdf * quantity;
+                    itemsHtml += `
+                        <div class="invoice-item-card border-b border-gray-100 last:border-b-0">
+                            <div class="invoice-img-placeholder">${item.icon}</div>
+                            <div class="flex-grow">
+                                <p class="font-bold text-gray-800">${quantity}x ${item[currentLang]}</p>
+                                <p class="text-sm text-gray-500">${item[`desc_${currentLang}`].substring(0, 50)}...</p>
+                            </div>
+                            <p class="font-extrabold text-secondary flex-shrink-0">${itemTotalCDF.toLocaleString('fr-CD')} FC</p>
+                        </div>
+                    `;
+                }
+            });
+
+            // Totals List HTML (CDF only)
+            const totalsHtml = `
+                <div class="flex justify-between font-medium">
+                    <span>${T.subtotal_label}</span>
+                    <span>${totals.subtotalCDF.toLocaleString('fr-CD')} FC</span>
+                </div>
+                <div class="flex justify-between font-medium">
+                    <span>${T.delivery_fee_label}</span>
+                    <span>${totals.deliveryFee.toLocaleString('fr-CD')} FC</span>
+                </div>
+                <div class="flex justify-between text-xl font-extrabold border-t mt-2 pt-2 text-dark">
+                    <span>${T.total_label}</span>
+                    <span class="text-secondary">${totals.totalCDF.toLocaleString('fr-CD')} FC</span>
+                </div>
+            `;
+
+            // Inject content
+            document.getElementById('order-id').textContent = Math.floor(Math.random() * 9000) + 1000; // Random 4-digit ID
+            document.getElementById('modal-location-text').textContent = location;
+            document.getElementById('modal-date-text').textContent = formattedDate; // Injection de la date
+            document.getElementById('modal-time-text').textContent = formattedTime; 
+            itemsList.innerHTML = itemsHtml;
+            totalsList.innerHTML = totalsHtml;
+
+            // Show/Hide Promo Message
+            if (totals.isFreeDelivery) {
+                promoMessage.classList.remove('hidden');
+            } else {
+                promoMessage.classList.add('hidden');
+            }
+
+            // Show modal
+            document.getElementById('confirmation-modal').style.display = 'flex';
+        }
+
+        /** Hides the confirmation modal. */
+        function hideConfirmationModal() {
+            document.getElementById('confirmation-modal').style.display = 'none';
+        }
+
+        /** Downloads the invoice as a PNG image. */
+        function downloadInvoice() {
+            const invoice = document.getElementById('invoice-to-capture');
+            const originalScroll = invoice.scrollTop; // Save current scroll
+            invoice.scrollTop = 0; // Scroll to top for capture
+
+            html2canvas(invoice, {
+                scale: 2, // Higher scale for better quality
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                allowTaint: true
+            }).then(canvas => {
+                invoice.scrollTop = originalScroll; // Restore scroll
+                const link = document.createElement('a');
+                link.download = 'Banikilabs_Facture_Commande_' + document.getElementById('order-id').textContent + '.png';
+                link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }).catch(error => {
+                console.error('Erreur lors de la capture de la facture:', error);
+                alert('Erreur lors de la capture de la facture. Veuillez réessayer.');
+            });
+        }
+
+        // --- Initialization and Event Listeners ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set initial language and state
+            document.getElementById('lang-select').value = 'fr';
+            switchLanguage('fr'); // This calls all necessary initial updates
+
+            
+            // Listener for cart updates on input changes (location, date, time)
+            document.getElementById('location-input').addEventListener('input', updateCartUI);
+            document.getElementById('delivery-date-input').addEventListener('input', updateCartUI); 
+            document.getElementById('delivery-time-input').addEventListener('input', updateCartUI);
+
+            // OPTIONNEL: Ajout d'un timer pour mettre à jour le statut en temps réel
+            setInterval(updateServiceStatusIndicator, 60000); // Mise à jour toutes les minutes
+        });
+
+    </script>
+</body>
+</html>
