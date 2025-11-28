@@ -42,22 +42,32 @@
             0%, 100% { box-shadow: 0 0 0 0 rgba(46, 172, 85, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(46, 172, 85, 0); }
         }
-        /* Style pour l'espace image */
-        .image-placeholder {
+        
+        /* Style pour l'espace image - HAUTEUR AGRANDIE */
+        .image-container {
             width: 100%;
-            height: 180px; 
+            height: 250px; /* NOUVELLE HAUTEUR */
             background-color: #FFFBF0; 
             border-radius: 0.75rem; 
-            display: flex;
+            overflow: hidden; 
+            margin-bottom: 1rem;
+            display: flex; /* Centrage pour le placeholder si image absente */
             align-items: center;
             justify-content: center;
-            margin-bottom: 1rem;
             font-size: 2.2rem; 
             color: var(--secondary); 
-            border: 2px dashed var(--primary);
-            text-align: center;
+            border: 2px dashed var(--primary); /* Bordure pour le cas de non-chargement */
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); 
         }
+        
+        /* Style pour l'image réelle */
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Assure que l'image couvre le conteneur */
+            display: block;
+        }
+        
         /* Styles pour la modale de confirmation */
         .modal-overlay {
             position: fixed;
@@ -197,10 +207,6 @@
             margin: 0; 
             opacity: 1; /* Ensure visibility */
         }
-        /* Forced 24h format display on inputs for consistency */
-        input[type="time"] {
-            /* Use a custom font if needed, but the browser handles the format */
-        }
     </style>
 </head>
 <body class="antialiased text-gray-800">
@@ -209,7 +215,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-4">
                 <div class="text-white text-sm font-medium p-2 border border-primary rounded-lg">
-                    <img src="logo.jpg" alt="Logo blabs" class="object-contain w-12 h-12,5">
+                    [Ajouter Logo ici]
                 </div>
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-primary tracking-tight" style="text-shadow: 0 0 10px rgba(255,215,0,0.7), 0 0 20px rgba(255,215,0,0.4);">
                     BANIKILABS FOOD <span class="text-white text-lg font-medium block sm:inline opacity-90">| Kinshasa</span>
@@ -271,7 +277,7 @@
                 </div>
                 
                 <h3 id="menu-title-display" class="text-2xl font-bold mb-4 text-dark border-b-2 border-primary pb-2" data-key="menu_title">Notre Menu du Jour : Petit Déjeuner</h3>
-                <div id="menu-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div id="menu-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
                     </div>
             </section>
             
@@ -428,43 +434,44 @@
         let selectedCategory = 'Breakfast'; // Default category
 
         // Menu de nourriture (Les prix sont désormais en CDF, `price_cdf`)
+        // ATTENTION : Les chemins d'images sont maintenant dans le répertoire racine (ex: 'pain-mayi-beignets.jpg')
         const menu = [
             // --- COMMON ITEMS (Drinks) ---
-            { id: 1, fr: 'Eau Minérale', en: 'Mineral Water', sw: 'Maji ya chupa', price_cdf: 750, desc_fr: 'Bouteille d\'eau fraîche.', desc_en: 'Bottle of fresh water.', desc_sw: 'Chupa ya maji baridi.', icon: '💧', placeholder_text: 'Eau', category: 'Common' },
-            { id: 2, fr: 'Jus de Fruits (Local)', en: 'Local Fruit Juice', sw: 'Juisi ya Matunda (Ya kienyeji)', price_cdf: 3000, desc_fr: 'Sélection de jus de fruits locaux.', desc_en: 'Selection of local fruit juices.', desc_sw: 'Uchaguzi wa juisi za matunda za kienyeji.', icon: '🍹', placeholder_text: 'Jus', category: 'Common' },
+            { id: 1, fr: 'Eau Minérale', en: 'Mineral Water', sw: 'Maji ya chupa', price_cdf: 750, desc_fr: 'Bouteille d\'eau fraîche.', desc_en: 'Bottle of fresh water.', desc_sw: 'Chupa ya maji baridi.', icon: '💧', placeholder_text: 'Eau', category: 'Common', image_url: 'eau-minerale.jpg' },
+            { id: 2, fr: 'Jus de Fruits (Local)', en: 'Local Fruit Juice', sw: 'Juisi ya Matunda (Ya kienyeji)', price_cdf: 3000, desc_fr: 'Sélection de jus de fruits locaux.', desc_en: 'Selection of local fruit juices.', desc_sw: 'Uchaguzi wa juisi za matunda za kienyeji.', icon: '🍹', placeholder_text: 'Jus', category: 'Common', image_url: 'jus-fruits-local.jpg' },
             
             // --- PETIT DÉJEUNER (Breakfast) ---
-            { id: 10, fr: 'Pain Mayi (Beignets)', en: 'Doughnuts (Beignets)', sw: 'Maandazi (Vibibi)', price_cdf: 300, desc_fr: 'Beignets congolais classiques.', desc_en: 'Classic Congolese doughnuts.', desc_sw: 'Maandazi ya kawaida ya Kongo.', icon: '🍩', placeholder_text: 'Beignet', category: 'Breakfast' },
-            { id: 11, fr: 'Spaghetti', en: 'Spaghetti', sw: 'Spaghetti', price_cdf: 2500, desc_fr: 'Spaghetti aux légumes et petite viande.', desc_en: 'Spaghetti with vegetables and a bit of meat.', desc_sw: 'Spaghetti na mboga na nyama kidogo.', icon: '🍝', placeholder_text: 'Spaghetti', category: 'Breakfast' },
-            { id: 12, fr: 'Pain Kangajourne', en: 'Kangajourne Bread', sw: 'Mkate wa Kangajourne', price_cdf: 700, desc_fr: 'Pain Kangajourne traditionnel.', desc_en: 'Traditional Kangajourne bread.', desc_sw: 'Mkate wa Kangajourne wa kitamaduni.', icon: '🥖', placeholder_text: 'Pain', category: 'Breakfast' },
-            { id: 16, fr: 'Petit Pain', en: 'Small Bread', sw: 'Mkate Mdogo', price_cdf: 800, desc_fr: 'Petit pain pour l\'accompagnement.', desc_en: 'Small bread for accompaniment.', desc_sw: 'Mkate mdogo kwa kuambatana.', icon: '🍞', placeholder_text: 'Petit Pain', category: 'Breakfast' },
-            { id: 17, fr: 'Pain Normal', en: 'Normal Bread', sw: 'Mkate wa Kawaida', price_cdf: 1000, desc_fr: 'Pain de taille normale.', desc_en: 'Normal sized bread.', desc_sw: 'Mkate wa ukubwa wa kawaida.', icon: '🥖', placeholder_text: 'Pain Normal', category: 'Breakfast' },
-            { id: 18, fr: 'Pain Supérieur', en: 'Premium Bread', sw: 'Mkate Bora', price_cdf: 1500, desc_fr: 'Pain de qualité supérieure.', desc_en: 'Higher quality bread.', desc_sw: 'Mkate wa ubora wa juu.', icon: '🥐', placeholder_text: 'Pain Supérieur', category: 'Breakfast' },
-            { id: 13, fr: 'Thé de Tangawifi', en: 'Ginger Tea', sw: 'Chai ya Tangawizi', price_cdf: 1500, desc_fr: 'Infusion de gingembre frais.', desc_en: 'Fresh ginger infusion.', desc_sw: 'Kinywaji cha tangawizi safi.', icon: '🍵', placeholder_text: 'Thé', category: 'Breakfast' },
-            { id: 14, fr: 'Thé de Citronelle avec Lait Concentré', en: 'Lemongrass Tea with Condensed Milk', sw: 'Chai ya Mchaichai na Maziwa ya Mgando', price_cdf: 1500, desc_fr: 'Thé de citronnelle servi avec du lait concentré.', desc_en: 'Lemongrass tea served with condensed milk.', desc_sw: 'Chai ya mchaichai inatumiwa na maziwa ya mgando.', icon: '🥛', placeholder_text: 'Thé/Lait', category: 'Breakfast' },
-            { id: 15, fr: 'Oeuf (Omelette/Dur)', en: 'Egg (Omelette/Hard-boiled)', sw: 'Yai (Omeleti/Kuchemshwa)', price_cdf: 1000, desc_fr: 'Œuf au choix (omelette ou dur).', desc_en: 'Egg of choice (omelette or hard-boiled).', desc_sw: 'Yai la chaguo (omeleti au hard-boiled).', icon: '🥚', placeholder_text: 'Oeuf', category: 'Breakfast' },
+            { id: 10, fr: 'Pain Mayi (Beignets)', en: 'Doughnuts (Beignets)', sw: 'Maandazi (Vibibi)', price_cdf: 300, desc_fr: 'Beignets congolais classiques.', desc_en: 'Classic Congolese doughnuts.', desc_sw: 'Maandazi ya kawaida ya Kongo.', icon: '🍩', placeholder_text: 'Beignet', category: 'Breakfast', image_url: 'pain-mayi-beignets.jpg' },
+            { id: 11, fr: 'Spaghetti', en: 'Spaghetti', sw: 'Spaghetti', price_cdf: 2500, desc_fr: 'Spaghetti aux légumes et petite viande.', desc_en: 'Spaghetti with vegetables and a bit of meat.', desc_sw: 'Spaghetti na mboga na nyama kidogo.', icon: '🍝', placeholder_text: 'Spaghetti', category: 'Breakfast', image_url: 'spaghetti.jpg' },
+            { id: 12, fr: 'Pain Kangajourne', en: 'Kangajourne Bread', sw: 'Mkate wa Kangajourne', price_cdf: 700, desc_fr: 'Pain Kangajourne traditionnel.', desc_en: 'Traditional Kangajourne bread.', desc_sw: 'Mkate wa Kangajourne wa kitamaduni.', icon: '🥖', placeholder_text: 'Pain', category: 'Breakfast', image_url: 'pain-kangajourne.jpg' },
+            { id: 16, fr: 'Petit Pain', en: 'Small Bread', sw: 'Mkate Mdogo', price_cdf: 800, desc_fr: 'Petit pain pour l\'accompagnement.', desc_en: 'Small bread for accompaniment.', desc_sw: 'Mkate mdogo kwa kuambatana.', icon: '🍞', placeholder_text: 'Petit Pain', category: 'Breakfast', image_url: 'petit-pain.jpg' },
+            { id: 17, fr: 'Pain Normal', en: 'Normal Bread', sw: 'Mkate wa Kawaida', price_cdf: 1000, desc_fr: 'Pain de taille normale.', desc_en: 'Normal sized bread.', desc_sw: 'Mkate wa ukubwa wa kawaida.', icon: '🥖', placeholder_text: 'Pain Normal', category: 'Breakfast', image_url: 'pain-normal.jpg' },
+            { id: 18, fr: 'Pain Supérieur', en: 'Premium Bread', sw: 'Mkate Bora', price_cdf: 1500, desc_fr: 'Pain de qualité supérieure.', desc_en: 'Higher quality bread.', desc_sw: 'Mkate wa ubora wa juu.', icon: '🥐', placeholder_text: 'Pain Supérieur', category: 'Breakfast', image_url: 'pain-superieur.jpg' },
+            { id: 13, fr: 'Thé de Tangawifi', en: 'Ginger Tea', sw: 'Chai ya Tangawizi', price_cdf: 1500, desc_fr: 'Infusion de gingembre frais.', desc_en: 'Fresh ginger infusion.', desc_sw: 'Kinywaji cha tangawizi safi.', icon: '🍵', placeholder_text: 'Thé', category: 'Breakfast', image_url: 'the-tangawifi.jpg' },
+            { id: 14, fr: 'Thé de Citronelle avec Lait Concentré', en: 'Lemongrass Tea with Condensed Milk', sw: 'Chai ya Mchaichai na Maziwa ya Mgando', price_cdf: 1500, desc_fr: 'Thé de citronnelle servi avec du lait concentré.', desc_en: 'Lemongrass tea served with condensed milk.', desc_sw: 'Chai ya mchaichai inatumiwa na maziwa ya mgando.', icon: '🥛', placeholder_text: 'Thé/Lait', category: 'Breakfast', image_url: 'the-citronelle-lait.jpg' },
+            { id: 15, fr: 'Oeuf (Omelette/Dur)', en: 'Egg (Omelette/Hard-boiled)', sw: 'Yai (Omeleti/Kuchemshwa)', price_cdf: 1000, desc_fr: 'Œuf au choix (omelette ou dur).', desc_en: 'Egg of choice (omelette or hard-boiled).', desc_sw: 'Yai la chaguo (omeleti au hard-boiled).', icon: '🥚', placeholder_text: 'Oeuf', category: 'Breakfast', image_url: 'oeuf.jpg' },
 
             // --- DÉJEUNER (Lunch) ---
-            { id: 20, fr: 'Fufu', en: 'Fufu', sw: 'Fufu', price_cdf: 1000, desc_fr: 'Pâte de manioc ou de maïs, plat de base.', desc_en: 'Cassava or corn paste, staple food.', desc_sw: 'Unga wa mihogo au mahindi, chakula kikuu.', icon: '🍚', placeholder_text: 'Fufu', category: 'Lunch' },
-            { id: 21, fr: 'Pondu (Feuilles de Manioc)', en: 'Pondu (Cassava Leaves)', sw: 'Pondu (Majani ya Mihogo)', price_cdf: 4000, desc_fr: 'Feuilles de manioc cuites à l\'étouffée.', desc_en: 'Cassava leaves slow-cooked.', desc_sw: 'Majani ya mihogo yaliyopikwa polepole.', icon: '🥬🍲', placeholder_text: 'Pondu', category: 'Lunch' },
-            { id: 22, fr: 'Fumbwa', en: 'Fumbwa Stew', sw: 'Mchuzi wa Fumbwa', price_cdf: 1500, desc_fr: 'Feuilles de manioc cuites avec des légumes.', desc_en: 'Cooked cassava leaves with vegetables.', desc_sw: 'Majani ya mihogo yaliyopikwa na mboga.', icon: '🍗🥬', placeholder_text: 'Fumbwa', category: 'Lunch' },
-            { id: 23, fr: 'Matembélé (Feuille de Patate Douce)', en: 'Matembele (Sweet Potato Leaves)', sw: 'Matembele (Majani ya Viazi Vitamu)', price_cdf: 1500, desc_fr: 'Feuilles de patate douce cuites.', desc_en: 'Cooked sweet potato leaves.', desc_sw: 'Majani ya viazi vitamu yaliyopikwa.', icon: '🍠🌱', placeholder_text: 'Matembélé', category: 'Lunch' },
-            { id: 24, fr: 'Haricot', en: 'Beans', sw: 'Maharagwe', price_cdf: 1500, desc_fr: 'Plat de haricots cuisinés à la congolaise.', desc_en: 'Congolese-style cooked beans.', desc_sw: 'Maharagwe yaliyopikwa kwa mtindo wa Kongo.', icon: '🫘', placeholder_text: 'Haricot', category: 'Lunch' },
-            { id: 25, fr: 'Riz', en: 'Rice', sw: 'Wali', price_cdf: 1000, desc_fr: 'Riz blanc pour accompagnement.', desc_en: 'White rice for accompaniment.', desc_sw: 'Wali mweupe kwa kuambatana.', icon: '🍚', placeholder_text: 'Riz', category: 'Lunch' },
-            { id: 26, fr: 'Poisson Frit', en: 'Fried Fish', sw: 'Samaki wa Kukaanga', price_cdf: 3000, desc_fr: 'Poisson frais frit.', desc_en: 'Fresh fried fish.', desc_sw: 'Samaki safi wa kukaanga.', icon: '🐟', placeholder_text: 'Poisson', category: 'Lunch' },
-            { id: 27, fr: 'Poulet Rôti/Frit', en: 'Roasted/Fried Chicken', sw: 'Kuku Choma/Kukaanga', price_cdf: 5000, desc_fr: 'Morceau de poulet rôti ou frit.', desc_en: 'Piece of roasted or fried chicken.', desc_sw: 'Kipande cha kuku choma au kukaanga.', icon: '🍗', placeholder_text: 'Poulet', category: 'Lunch' },
-            { id: 28, fr: 'Boeuf', en: 'Beef', sw: 'Nyama ya Ng\'ombe', price_cdf: 4500, desc_fr: 'Morceau de bœuf en sauce ou frit.', desc_en: 'Piece of beef in sauce or fried.', desc_sw: 'Kipande cha nyama ya ng\'ombe kwenye mchuzi ou kukaangwa.', icon: '🥩', placeholder_text: 'Boeuf', category: 'Lunch' },
+            { id: 20, fr: 'Fufu', en: 'Fufu', sw: 'Fufu', price_cdf: 1000, desc_fr: 'Pâte de manioc ou de maïs, plat de base.', desc_en: 'Cassava or corn paste, staple food.', desc_sw: 'Unga wa mihogo au mahindi, chakula kikuu.', icon: '🍚', placeholder_text: 'Fufu', category: 'Lunch', image_url: 'fufu.jpg' },
+            { id: 21, fr: 'Pondu (Feuilles de Manioc)', en: 'Pondu (Cassava Leaves)', sw: 'Pondu (Majani ya Mihogo)', price_cdf: 4000, desc_fr: 'Feuilles de manioc cuites à l\'étouffée.', desc_en: 'Cassava leaves slow-cooked.', desc_sw: 'Majani ya mihogo yaliyopikwa polepole.', icon: '🥬🍲', placeholder_text: 'Pondu', category: 'Lunch', image_url: 'pondu.jpg' },
+            { id: 22, fr: 'Fumbwa', en: 'Fumbwa Stew', sw: 'Mchuzi wa Fumbwa', price_cdf: 1500, desc_fr: 'Feuilles de manioc cuites avec des légumes.', desc_en: 'Cooked cassava leaves with vegetables.', desc_sw: 'Majani ya mihogo yaliyopikwa na mboga.', icon: '🍗🥬', placeholder_text: 'Fumbwa', category: 'Lunch', image_url: 'fumbwa.jpg' },
+            { id: 23, fr: 'Matembélé (Feuille de Patate Douce)', en: 'Matembele (Sweet Potato Leaves)', sw: 'Matembele (Majani ya Viazi Vitamu)', price_cdf: 1500, desc_fr: 'Feuilles de patate douce cuites.', desc_en: 'Cooked sweet potato leaves.', desc_sw: 'Majani ya viazi vitamu yaliyopikwa.', icon: '🍠🌱', placeholder_text: 'Matembélé', category: 'Lunch', image_url: 'matembele.jpg' },
+            { id: 24, fr: 'Haricot', en: 'Beans', sw: 'Maharagwe', price_cdf: 1500, desc_fr: 'Plat de haricots cuisinés à la congolaise.', desc_en: 'Congolese-style cooked beans.', desc_sw: 'Maharagwe yaliyopikwa kwa mtindo wa Kongo.', icon: '🫘', placeholder_text: 'Haricot', category: 'Lunch', image_url: 'haricot.jpg' },
+            { id: 25, fr: 'Riz', en: 'Rice', sw: 'Wali', price_cdf: 1000, desc_fr: 'Riz blanc pour accompagnement.', desc_en: 'White rice for accompaniment.', desc_sw: 'Wali mweupe kwa kuambatana.', icon: '🍚', placeholder_text: 'Riz', category: 'Lunch', image_url: 'riz.jpg' },
+            { id: 26, fr: 'Poisson Frit', en: 'Fried Fish', sw: 'Samaki wa Kukaanga', price_cdf: 3000, desc_fr: 'Poisson frais frit.', desc_en: 'Fresh fried fish.', desc_sw: 'Samaki safi wa kukaanga.', icon: '🐟', placeholder_text: 'Poisson', category: 'Lunch', image_url: 'poisson-frit.jpg' },
+            { id: 27, fr: 'Poulet Rôti/Frit', en: 'Roasted/Fried Chicken', sw: 'Kuku Choma/Kukaanga', price_cdf: 5000, desc_fr: 'Morceau de poulet rôti ou frit.', desc_en: 'Piece of roasted or fried chicken.', desc_sw: 'Kipande cha kuku choma au kukaanga.', icon: '🍗', placeholder_text: 'Poulet', category: 'Lunch', image_url: 'poulet-roti-frit.jpg' },
+            { id: 28, fr: 'Boeuf', en: 'Beef', sw: 'Nyama ya Ng\'ombe', price_cdf: 4500, desc_fr: 'Morceau de bœuf en sauce ou frit.', desc_en: 'Piece of beef in sauce or fried.', desc_sw: 'Kipande cha nyama ya ng\'ombe kwenye mchuzi ou kukaangwa.', icon: '🥩', placeholder_text: 'Boeuf', category: 'Lunch', image_url: 'boeuf.jpg' },
 
             // --- DÎNER (Dinner) ---
-            { id: 30, fr: 'Chikwangue', en: 'Chikwangue', sw: 'Chikwangue', price_cdf: 2000, desc_fr: 'Pâte de manioc fermentée (préférée le soir).', desc_en: 'Fermented cassava paste (preferred for dinner).', desc_sw: 'Unga wa mihogo uliochachuka (chakula cha jioni kinachopendwa).', icon: '🍚🐟', placeholder_text: 'Chikwangue', category: 'Dinner' },
-            { id: 31, fr: 'Fufu', en: 'Fufu', sw: 'Fufu', price_cdf: 1000, desc_fr: 'Pâte de manioc ou de maïs, plat de base.', desc_en: 'Cassava or corn paste, staple food.', desc_sw: 'Unga wa mihogo au mahindi, chakula kikuu.', icon: '🍚', placeholder_text: 'Fufu', category: 'Dinner' },
-            { id: 32, fr: 'Gros Poisson Salé', en: 'Large Salted Fish', sw: 'Samaki Mkubwa wa Chumvi', price_cdf: 2500, desc_fr: 'Morceau de gros poisson salé et frit.', desc_en: 'Piece of large salted and fried fish.', desc_sw: 'Kipande cha samaki mkubwa wa chumvi na kukaangwa.', icon: '🎣', placeholder_text: 'Poisson', category: 'Dinner' },
-            { id: 33, fr: 'Chenille (Sautées)', en: 'Caterpillars (Sautéed)', sw: 'Viwavi (Kukaangwa)', price_cdf: 2000, desc_fr: 'Plat de chenilles, spécialité congolaise.', desc_en: 'Sautéed caterpillars, Congolese delicacy.', desc_sw: 'Chakula cha viwavi, kitamu cha Kongo.', icon: '🐛', placeholder_text: 'Chenille', category: 'Dinner' },
-            { id: 34, fr: 'Ngombe (Boeuf) Braisé', en: 'Braised Beef (Ngombe)', sw: 'Nyama ya Ng\'ombe Choma', price_cdf: 6000, desc_fr: 'Morceau de bœuf braisé au charbon.', desc_en: 'Piece of charcoal-braised beef.', desc_sw: 'Kipande cha nyama ya ng\'ombe choma.', icon: '🍖', placeholder_text: 'Ngombe', category: 'Dinner' },
-            { id: 35, fr: 'Poulet Mayo (Salade)', en: 'Chicken Mayo Salad', sw: 'Saladi ya Kuku na Mayo', price_cdf: 4000, desc_fr: 'Salade de poulet avec mayonnaise (pour un repas léger).', desc_en: 'Chicken salad with mayonnaise (for a light meal).', desc_sw: 'Saladi ya kuku na mayonnaise (kwa chakula chepesi).', icon: '🥗', placeholder_text: 'Salade', category: 'Dinner' }
+            { id: 30, fr: 'Chikwangue', en: 'Chikwangue', sw: 'Chikwangue', price_cdf: 2000, desc_fr: 'Pâte de manioc fermentée (préférée le soir).', desc_en: 'Fermented cassava paste (preferred for dinner).', desc_sw: 'Unga wa mihogo uliochachuka (chakula cha jioni kinachopendwa).', icon: '🍚🐟', placeholder_text: 'Chikwangue', category: 'Dinner', image_url: 'chikwangue.jpg' },
+            { id: 31, fr: 'Fufu', en: 'Fufu', sw: 'Fufu', price_cdf: 1000, desc_fr: 'Pâte de manioc ou de maïs, plat de base.', desc_en: 'Cassava or corn paste, staple food.', desc_sw: 'Unga wa mihogo au mahindi, chakula kikuu.', icon: '🍚', placeholder_text: 'Fufu', category: 'Dinner', image_url: 'fufu.jpg' },
+            { id: 32, fr: 'Gros Poisson Salé', en: 'Large Salted Fish', sw: 'Samaki Mkubwa wa Chumvi', price_cdf: 2500, desc_fr: 'Morceau de gros poisson salé et frit.', desc_en: 'Piece of large salted and fried fish.', desc_sw: 'Kipande cha samaki mkubwa wa chumvi na kukaangwa.', icon: '🎣', placeholder_text: 'Poisson', category: 'Dinner', image_url: 'gros-poisson-sale.jpg' },
+            { id: 33, fr: 'Chenille (Sautées)', en: 'Caterpillars (Sautéed)', sw: 'Viwavi (Kukaangwa)', price_cdf: 2000, desc_fr: 'Plat de chenilles, spécialité congolaise.', desc_en: 'Sautéed caterpillars, Congolese delicacy.', desc_sw: 'Chakula cha viwavi, kitamu cha Kongo.', icon: '🐛', placeholder_text: 'Chenille', category: 'Dinner', image_url: 'chenille-sautees.jpg' },
+            { id: 34, fr: 'Ngombe (Boeuf) Braisé', en: 'Braised Beef (Ngombe)', sw: 'Nyama ya Ng\'ombe Choma', price_cdf: 6000, desc_fr: 'Morceau de bœuf braisé au charbon.', desc_en: 'Piece of charcoal-braised beef.', desc_sw: 'Kipande cha nyama ya ng\'ombe choma.', icon: '🍖', placeholder_text: 'Ngombe', category: 'Dinner', image_url: 'ngombe-braise.jpg' },
+            { id: 35, fr: 'Poulet Mayo (Salade)', en: 'Chicken Mayo Salad', sw: 'Saladi ya Kuku na Mayo', price_cdf: 4000, desc_fr: 'Salade de poulet avec mayonnaise (pour un repas léger).', desc_en: 'Chicken salad with mayonnaise (for a light meal).', desc_sw: 'Saladi ya kuku na mayonnaise (kwa chakula chepesi).', icon: '🥗', placeholder_text: 'Salade', category: 'Dinner', image_url: 'poulet-mayo-salade.jpg' }
         ];
 
-        // --- Translation Data ---
+        // --- Translation Data (unchanged) ---
         const translations = {
             fr: {
                 welcome_title: '👋 Bienvenue chez Banikilabs Food !',
@@ -882,12 +889,22 @@
                 const desc = item[`desc_${currentLang}`];
                 const priceCDF = item.price_cdf; // Price directly in CDF
                 const placeholderText = item.placeholder_text; 
+                const icon = item.icon;
+                const image_url = item.image_url; // Récupération du chemin d'image
                 const buttonText = `<span class="text-lg font-extrabold">${T.add_to_cart}</span>`; 
+                
+                // Détermine le contenu de l'espace image : soit <img>, soit le placeholder emoji
+                const imageContent = image_url 
+                    ? `<img src="${image_url}" alt="${name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.style.display='none'; this.closest('.image-container').innerHTML='${placeholderText} ${icon}'">`
+                    : `${placeholderText} ${icon}`; // Fallback: placeholder emoji if image_url is missing
+                
+                // Détermine la classe du conteneur (pour afficher l'emoji si l'image est manquante)
+                const containerClass = image_url ? '' : 'image-placeholder';
 
                 const cardHtml = `
                     <div class="menu-card bg-white p-5 rounded-2xl shadow-xl flex flex-col justify-between border-l-8 border-${item.category === 'Common' ? 'primary' : 'secondary'}">
-                        <div class="image-placeholder">
-                            ${placeholderText} ${item.icon} 
+                        <div class="image-container ${containerClass}">
+                            ${imageContent}
                         </div>
                         <div>
                             <h4 class="text-xl font-bold text-dark mb-1">${name}</h4>
@@ -1203,11 +1220,6 @@
             document.getElementById('confirmation-modal').style.display = 'flex';
         }
 
-        /** Hides the confirmation modal. */
-        function hideConfirmationModal() {
-            document.getElementById('confirmation-modal').style.display = 'none';
-        }
-
         /** Downloads the invoice as a PNG image. */
         function downloadInvoice() {
             const invoice = document.getElementById('invoice-to-capture');
@@ -1232,6 +1244,11 @@
                 alert('Erreur lors de la capture de la facture. Veuillez réessayer.');
             });
         }
+        
+        function hideConfirmationModal() {
+            document.getElementById('confirmation-modal').style.display = 'none';
+        }
+
 
         // --- Initialization and Event Listeners ---
 
@@ -1252,5 +1269,4 @@
 
     </script>
 </body>
-
 </html>
